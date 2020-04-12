@@ -12,20 +12,26 @@ jobs:
         uses: actions/checkout@v1
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 13.12
-      - name: Build UI
-        run: |
-          cd ui
-          npm ci
-          npm run build
-      - name: Fetch tags
-        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-      - name: Run GoReleaser
-        uses: docker://bepsays/ci-goreleaser:1.14-1
-
+#      - uses: actions/setup-node@v1
+#        with:
+#          node-version: 13.12
+#      - name: Build UI
+#        run: |
+#          cd ui
+#          npm ci
+#          npm run build
+#      - name: Fetch tags
+#        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+#      - name: Run GoReleaser
+#        uses: docker://bepsays/ci-goreleaser:1.14-1
+#
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          args: goreleaser release --rm-dist
+      - name: Updates PKGBUILD
+        uses: docker://archlinux:latest
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_TAG: ${GITHUB_REF##*/}
         with:
-          args: goreleaser release --rm-dist
+          args: bin/update-aur.sh
